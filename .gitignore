@@ -21,3 +21,18 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# VS Code settings
+.vscode/
+
+# Firebase build/cache
+.firebase/
+.firebaserc
+.firebase-tools.json
+
+# Tailwind temporary files
+*.tmp
+
+# OS generated files
+Thumbs.db
+
