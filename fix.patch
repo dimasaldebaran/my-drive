@@ -1,0 +1,12 @@
+diff --git a/tailwind.config.js b/tailwind.config.js
+index d947ab1..92c2367 100644
+--- a/tailwind.config.js
++++ b/tailwind.config.js
+@@ -1,6 +1,6 @@
+ /** @type {import('tailwindcss').Config} */
+ module.exports = {
+-  content: [],
++  content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
+   theme: {
+     extend: {},
+   },

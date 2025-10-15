@@ -1,8 +1,10 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from "@testing-library/react";
+import App from "./App";
 
-test('renders learn react link', () => {
+test("menampilkan judul ruang arsip", () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  expect(screen.getByText(/Ruang Arsip Dinas/i)).toBeInTheDocument();
+  expect(screen.getAllByText(/Folder Dinas/i)[0]).toBeInTheDocument();
+  expect(screen.getByText(/Script Siap Salin/i)).toBeInTheDocument();
 });
