@@ -1,69 +1,125 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { db, storage } from "./firebase";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  query,
+  import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+  } from "react";
+  import { db, storage } from "./firebase";
+  import {
+    ref,
+    uploadBytesResumable,
+    getDownloadURL,
+    deleteObject,
+  } from "firebase/storage";
+  import {
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc,
+    query,
     serverTimestamp,
-  where,
-} from "firebase/firestore";
-import {
-  UploadCloud,
-  Trash2,
-  FileText,
-  Image as ImageIcon,
-  Loader2,
-  Folder,
-  Copy,
-  Check,
-  Info,
-} from "lucide-react";
+    where,
+  } from "firebase/firestore";
+  import {
+    UploadCloud,
+    Trash2,
+    FileText,
+    Image as ImageIcon,
+    Loader2,
+    Folder,
+    Copy,
+    Check,
+    Info,
+    Search,
+  } from "lucide-react";
 
-const departments = [
-  { id: "dinas-1", name: "Dinas 1" },
-  { id: "dinas-2", name: "Dinas 2" },
-  { id: "dinas-3", name: "Dinas 3" },
-];
+  const departmentNames = [
+  "Dinas Pendidikan",
+  "Dinas Kesehatan",
+  "Dinas Pekerjaan Umum dan Penataan Ruang",
+  "Dinas Perhubungan",
+  "Dinas Kependudukan dan Pencatatan Sipil",
+  "Dinas Sosial",
+  "Dinas Lingkungan Hidup",
+  "Dinas Pariwisata dan Ekonomi Kreatif",
+  "Dinas Pemuda dan Olahraga",
+  "Dinas Perindustrian dan Perdagangan",
+  "Dinas Pertanian",
+  "Dinas Ketahanan Pangan",
+  "Dinas Kelautan dan Perikanan",
+  "Dinas Peternakan dan Kesehatan Hewan",
+  "Dinas Penanaman Modal dan PTSP",
+  "Dinas Tenaga Kerja",
+  "Dinas Koperasi dan UKM",
+  "Dinas Komunikasi dan Informatika",
+  "Dinas Perpustakaan dan Kearsipan",
+  "Dinas Pemberdayaan Perempuan dan Perlindungan Anak",
+  "Dinas Pengendalian Penduduk dan KB",
+  "Dinas Perumahan Rakyat dan Kawasan Permukiman",
+  "Dinas Kebudayaan",
+  "Dinas Penanggulangan Bencana Daerah",
+  "Dinas Satuan Polisi Pamong Praja",
+  "Dinas Energi dan Sumber Daya Mineral",
+  "Dinas Bina Marga dan Sumber Daya Air",
+  "Dinas Cipta Karya dan Tata Ruang",
+  "Dinas Pertanahan",
+  "Dinas Transmigrasi",
+  "Dinas Statistik dan Persandian",
+  "Dinas Pemberdayaan Masyarakat dan Desa",
+  "Dinas Kebersihan dan Pertamanan",
+  "Dinas Penelitian dan Pengembangan",
+  "Dinas Arsip dan Dokumentasi",
+  "Dinas Pelayanan Terpadu",
+  "Dinas Ketertiban Umum",
+  "Dinas Pendapatan Daerah",
+  "Dinas Keamanan Siber Daerah",
+  "Dinas Administrasi Pembangunan",
+  ];
 
-const isImage = (name = "") =>
-  [".png", ".jpg", ".jpeg", ".gif", ".webp"].some((ext) =>
-    name.toLowerCase().endsWith(ext)
-  );
+  const slugify = (text) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 
-const formatDate = (timestamp) => {
-  if (!timestamp) return "Baru diunggah";
-  try {
-    return timestamp.toDate().toLocaleString();
-  } catch (error) {
-    return "Baru diunggah";
-  }
-};
+  const departments = departmentNames.map((name) => ({
+    id: slugify(name),
+    name,
+  }));
 
-export default function App() {
-  const [files, setFiles] = useState([]);
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [dragOver, setDragOver] = useState(false);
-  const [activeFolder, setActiveFolder] = useState(departments[0].id);
-  const [copiedFileId, setCopiedFileId] = useState(null);
-  const [snippetCopied, setSnippetCopied] = useState(false);
-  const inputRef = useRef(null);
+  const isImage = (name = "") =>
+    [".png", ".jpg", ".jpeg", ".gif", ".webp"].some((ext) =>
+      name.toLowerCase().endsWith(ext)
+    );
 
-  const filesCol = collection(db, "files");
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "Baru diunggah";
+    try {
+      return timestamp.toDate().toLocaleString();
+    } catch (error) {
+      return "Baru diunggah";
+    }
+  };
 
-  const getFolderName = useCallback(
-    (id) => departments.find((folder) => folder.id === id)?.name ?? id,
-    []
-  );
+  export default function App() {
+    const [files, setFiles] = useState([]);
+    const [uploading, setUploading] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [dragOver, setDragOver] = useState(false);
+    const [activeFolder, setActiveFolder] = useState(departments[0].id);
+    const [copiedFileId, setCopiedFileId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [folderSearch, setFolderSearch] = useState("");
+    const inputRef = useRef(null);
+
+    const filesCol = collection(db, "files");
+
+    const getFolderName = useCallback(
+      (id) => departments.find((folder) => folder.id === id)?.name ?? id,
+      []
+    );;
 
   const loadFiles = useCallback(
     async (folderId) => {
@@ -93,6 +149,28 @@ export default function App() {
     useEffect(() => {
     loadFiles(activeFolder);
   }, [activeFolder, loadFiles]);
+
+   useEffect(() => {
+    setSearchTerm("");
+  }, [activeFolder]);
+
+  const filteredFolders = useMemo(() => {
+    const term = folderSearch.trim().toLowerCase();
+    if (!term) return departments;
+    return departments.filter((folder) =>
+      folder.name.toLowerCase().includes(term)
+    );
+  }, [folderSearch]);
+
+  const filteredFiles = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return files;
+    return files.filter((file) => file.name?.toLowerCase().includes(term));
+  }, [files, searchTerm]);
+
+  const fileCountLabel = searchTerm
+    ? `${filteredFiles.length} dari ${files.length} file`
+    : `${files.length} file`;
 
   const handleChooseFile = () => inputRef.current?.click();
 
@@ -190,24 +268,6 @@ export default function App() {
       setTimeout(() => setCopiedFileId(null), 2000);
     });
 
-  const baseOrigin =
-    typeof window !== "undefined" ? window.location.origin : "https://example.com";
-
-  const scriptSnippet = `// Contoh script berbagi dokumen
-fetch("${baseOrigin}/api/share", {
-  method: "POST",
-  body: JSON.stringify({
-    folder: "${getFolderName(activeFolder)}",
-    link: "https://contoh.link/dokumen",
-  }),
-});`;
-
-  const handleCopySnippet = () =>
-    copyToClipboard(scriptSnippet, () => {
-      setSnippetCopied(true);
-      setTimeout(() => setSnippetCopied(false), 2000);
-    });
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 text-slate-800">
       <header className="border-b bg-white/80 backdrop-blur">
@@ -230,25 +290,46 @@ fetch("${baseOrigin}/api/share", {
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
               Folder Dinas
             </h2>
-            <nav className="flex flex-col gap-2">
-              {departments.map((folder) => {
-                const isActive = activeFolder === folder.id;
-                return (
-                  <button
-                    key={folder.id}
-                    onClick={() => setActiveFolder(folder.id)}
-                    className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                      isActive
-                        ? "border-indigo-400 bg-indigo-50 text-indigo-600 shadow-sm"
-                        : "border-transparent bg-slate-50 text-slate-600 hover:bg-white"
-                    }`}
-                  >
-                    <Folder size={18} />
-                    <span className="font-medium">{folder.name}</span>
-                  </button>
-                );
-              })}
-            </nav>
+                        <label className="relative mt-3 block">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                size={16}
+              />
+              <input
+                type="search"
+                value={folderSearch}
+                onChange={(event) => setFolderSearch(event.target.value)}
+                placeholder="Cari nama dinas…"
+                className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </label>
+            <div className="mt-3 max-h-80 overflow-y-auto pr-1">
+              <nav className="flex flex-col gap-2">
+                {filteredFolders.length === 0 ? (
+                  <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-xs text-slate-500">
+                    Tidak ada dinas dengan nama "{folderSearch}".
+                  </p>
+                ) : (
+                  filteredFolders.map((folder) => {
+                    const isActive = activeFolder === folder.id;
+                    return (
+                      <button
+                        key={folder.id}
+                        onClick={() => setActiveFolder(folder.id)}
+                      className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                        isActive
+                          ? "border-indigo-400 bg-indigo-50 text-indigo-600 shadow-sm"
+                          : "border-transparent bg-slate-50 text-slate-600 hover:bg-white"
+                      }`}
+                    >
+                      <Folder size={18} />
+                      <span className="font-medium">{folder.name}</span>
+                    </button>
+                    );
+                  })
+                )}
+              </nav>
+            </div>
           </div>
           <div className="mt-6 space-y-4 rounded-3xl border border-slate-200/80 bg-white/80 p-5 shadow-sm backdrop-blur">
             <div className="flex items-start gap-3">
@@ -345,11 +426,23 @@ fetch("${baseOrigin}/api/share", {
             </div>
 
             <div className="rounded-3xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur">
-              <div className="mb-4 flex items-center justify-between">
+              <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <h3 className="text-lg font-semibold text-slate-900">Daftar File</h3>
-                <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                  {files.length} file
-                </span>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                  <label className="relative flex items-center">
+                    <Search className="pointer-events-none absolute left-3 text-slate-400" size={16} />
+                    <input
+                      type="search"
+                      value={searchTerm}
+                      onChange={(event) => setSearchTerm(event.target.value)}
+                      placeholder="Cari file…"
+                      className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </label>
+                  <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                    {fileCountLabel}
+                  </span>
+                </div>
               </div>
 
               {files.length === 0 ? (
@@ -357,9 +450,13 @@ fetch("${baseOrigin}/api/share", {
                   Belum ada file di folder ini. Mulai unggah dokumen untuk {" "}
                   {getFolderName(activeFolder)}.
                 </div>
-              ) : (
+              ) : filteredFiles.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/60 p-8 text-center text-sm text-indigo-600">
+                  Tidak ada file yang cocok dengan pencarian "{searchTerm}".
+                </div>  
+            ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  {files.map((file) => (
+                  {filteredFiles.map((file) => (
                     <div
                       key={file.id}
                       className="group flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow"
@@ -437,40 +534,11 @@ fetch("${baseOrigin}/api/share", {
               )}
             </div>
 
-            <div className="rounded-3xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Script Siap Salin</h3>
-                  <p className="text-xs text-slate-500">
-                    Gunakan contoh script ini untuk membagikan dokumen ke sistem lain.
-                  </p>
-                </div>
-                <button
-                  onClick={handleCopySnippet}
-                  className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                    snippetCopied
-                      ? "bg-emerald-500 text-white"
-                      : "bg-slate-900 text-white hover:bg-slate-700"
-                  }`}
-                >
-                  {snippetCopied ? <Check size={14} /> : <Copy size={14} />}
-                  {snippetCopied ? "Script Tersalin" : "Salin Script"}
-                </button>
-              </div>
-              <pre className="rounded-2xl border border-slate-200 bg-slate-900/90 p-4 text-xs text-slate-100">
-                <code>{scriptSnippet}</code>
-              </pre>
-              <p className="mt-3 text-[11px] text-slate-400">
-                Sesuaikan <span className="font-semibold text-indigo-300">folder</span> dan
-                <span className="font-semibold text-indigo-300"> link</span> sebelum dibagikan.
-              </p>
-            </div>
           </div>
         </section>
       </main>
       <div className="sr-only" aria-live="polite">
         {copiedFileId ? "Tautan file berhasil disalin" : ""}
-        {snippetCopied ? "Script siap digunakan" : ""}
       </div>
     </div>
   );

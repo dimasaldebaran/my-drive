@@ -6,5 +6,7 @@ test("menampilkan judul ruang arsip", () => {
 
   expect(screen.getByText(/Ruang Arsip Dinas/i)).toBeInTheDocument();
   expect(screen.getAllByText(/Folder Dinas/i)[0]).toBeInTheDocument();
-  expect(screen.getByText(/Script Siap Salin/i)).toBeInTheDocument();
+  expect(screen.getByText(/Unggah File/i)).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/Cari nama dinas/i)).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/Cari file/i)).toBeInTheDocument();
 });
