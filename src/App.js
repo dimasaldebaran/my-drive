@@ -33,6 +33,10 @@
     Check,
     Info,
     Search,
+    ShieldCheck,
+    ClipboardList,
+    AlertCircle,
+    CheckCircle2,
   } from "lucide-react";
 
   const departmentNames = [
@@ -111,6 +115,15 @@
     const [copiedFileId, setCopiedFileId] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [folderSearch, setFolderSearch] = useState("");
+    const [showCover, setShowCover] = useState(true);
+    const [followUps, setFollowUps] = useState([]);
+    const [followUpForm, setFollowUpForm] = useState({
+      title: "",
+      responsible: "",
+      dueDate: "",
+      notes: "",
+    });
+    const [followUpError, setFollowUpError] = useState("")
     const inputRef = useRef(null);
 
     const filesCol = collection(db, "files");
@@ -266,6 +279,132 @@
       setCopiedFileId(file.id);
       setTimeout(() => setCopiedFileId(null), 2000);
     });
+
+      const handleFollowUpChange = (field) => (event) => {
+    const value = event.target.value;
+    setFollowUpForm((prev) => ({ ...prev, [field]: value }));
+    if (followUpError) {
+      setFollowUpError("");
+    }
+  };
+
+  const formatFollowUpDueDate = (value) => {
+    if (!value) return "Tidak ada batas waktu";
+    try {
+      return new Date(value + "T00:00:00").toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+    } catch (error) {
+      return value;
+    }
+  };
+
+  const handleAddFollowUp = (event) => {
+    event.preventDefault();
+    if (!followUpForm.title.trim()) {
+      setFollowUpError("Judul tindak lanjut wajib diisi.");
+      return;
+    }
+
+    const newFollowUp = {
+      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      title: followUpForm.title.trim(),
+      responsible: followUpForm.responsible.trim(),
+      dueDate: followUpForm.dueDate,
+      notes: followUpForm.notes.trim(),
+      completed: false,
+      createdAt: Date.now(),
+    };
+
+    setFollowUps((prev) => [newFollowUp, ...prev]);
+    setFollowUpForm({ title: "", responsible: "", dueDate: "", notes: "" });
+    setFollowUpError("");
+  };
+
+  const toggleFollowUpStatus = (id) => {
+    setFollowUps((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, completed: !item.completed } : item
+      )
+    );
+  };
+
+  const deleteFollowUp = (id) => {
+    setFollowUps((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  if (showCover) {
+    return (
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-sky-700 via-indigo-700 to-blue-900 text-white">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.22),_transparent_55%)]" />
+        <div className="pointer-events-none absolute -top-32 -left-32 h-72 w-72 rounded-full bg-sky-400/40 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -right-10 h-80 w-80 rounded-full bg-indigo-500/40 blur-3xl" />
+        <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center gap-12 px-6 text-center">
+          <div className="space-y-4">
+            <p className="text-sm font-semibold uppercase tracking-[0.6em] text-sky-100/80">
+              Inspektorat Daerah Kota Kupang
+            </p>
+            <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow md:text-5xl">
+              Sistem Pengawasan Terpadu dan Terukur
+            </h1>
+            <p className="text-base text-sky-100 md:text-lg">
+              Tingkatkan pengawasan internal dengan portal terpadu untuk memantau
+              dokumen, tindak lanjut, dan kolaborasi antar bidang.
+            </p>
+          </div>
+
+          <div className="relative">
+            <div className="absolute -inset-10 rounded-full bg-white/10 blur-2xl" />
+            <div className="relative flex h-56 w-56 items-center justify-center overflow-hidden rounded-full border-4 border-white/40 bg-white/10 backdrop-blur-xl shadow-2xl">
+              <div className="flex h-44 w-44 items-center justify-center rounded-full bg-white/90 p-6 shadow-xl">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/4/49/Lambang_Kota_Kupang.png"
+                  alt="Lambang Kota Kupang"
+                  className="h-full w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid w-full gap-4 text-left sm:grid-cols-2">
+            <div className="rounded-3xl border border-white/20 bg-white/10 p-5 backdrop-blur">
+              <div className="mb-3 inline-flex items-center justify-center rounded-full bg-sky-500/80 p-2">
+                <ShieldCheck size={22} />
+              </div>
+              <h2 className="text-lg font-semibold text-white">Pengawasan Progresif</h2>
+              <p className="mt-2 text-sm text-sky-100/80">
+                Monitor tindak lanjut dan laporkan perkembangan secara real-time.
+              </p>
+            </div>
+            <div className="rounded-3xl border border-white/20 bg-white/10 p-5 backdrop-blur">
+              <div className="mb-3 inline-flex items-center justify-center rounded-full bg-rose-500/80 p-2">
+                <ClipboardList size={22} />
+              </div>
+              <h2 className="text-lg font-semibold text-white">Pusat Dokumen</h2>
+              <p className="mt-2 text-sm text-sky-100/80">
+                Simpan arsip pemeriksaan dan rekomendasi dalam satu repositori.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setShowCover(false)}
+            className="group inline-flex flex-col items-center gap-1 rounded-full border border-white/30 bg-white/90 px-10 py-4 text-sky-700 shadow-lg transition hover:-translate-y-0.5 hover:bg-white"
+          >
+            <span className="text-lg font-semibold tracking-wide">
+              SIPATUH
+            </span>
+            <span className="text-xs font-medium text-slate-500">
+              Sistem Pengawasan Terpadu dan Terukur
+            </span>
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen bg-white text-slate-800">
@@ -429,6 +568,138 @@
                       />
                     </div>
                   </div>
+                )}
+              </div>
+            </div>
+
+                        <div className="rounded-3xl border border-indigo-100/80 bg-white p-6 shadow-lg shadow-indigo-100/40">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-900">E-Tindak Lanjut</h2>
+                  <p className="text-sm text-slate-500">
+                    Catat tindak lanjut hasil pemeriksaan dan pantau status penyelesaiannya bersama tim.
+                  </p>
+                </div>
+              </div>
+
+              <form
+                onSubmit={handleAddFollowUp}
+                className="mt-6 grid gap-4 sm:grid-cols-2"
+              >
+                <label className="flex flex-col gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Judul Tindak Lanjut
+                  </span>
+                  <input
+                    type="text"
+                    value={followUpForm.title}
+                    onChange={handleFollowUpChange("title")}
+                    placeholder="Contoh: Evaluasi SOP Pelayanan"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Penanggung Jawab
+                  </span>
+                  <input
+                    type="text"
+                    value={followUpForm.responsible}
+                    onChange={handleFollowUpChange("responsible")}
+                    placeholder="Nama bidang atau pejabat"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Batas Waktu
+                  </span>
+                  <input
+                    type="date"
+                    value={followUpForm.dueDate}
+                    onChange={handleFollowUpChange("dueDate")}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </label>
+                <label className="flex flex-col gap-2 sm:col-span-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Catatan / Rincian Aksi
+                  </span>
+                  <textarea
+                    value={followUpForm.notes}
+                    onChange={handleFollowUpChange("notes")}
+                    rows={3}
+                    placeholder="Catat langkah tindak lanjut, kebutuhan dukungan, atau progres terbaru."
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </label>
+                <div className="sm:col-span-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="text-sm text-rose-500">{followUpError}</div>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center gap-2 self-end rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-300/60 transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  >
+                    <ClipboardList size={18} /> Simpan Tindak Lanjut
+                  </button>
+                </div>
+              </form>
+
+              <div className="mt-6 space-y-4">
+                {followUps.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
+                    Belum ada catatan tindak lanjut. Tambahkan rencana aksi untuk setiap rekomendasi pemeriksaan.
+                  </div>
+                ) : (
+                  followUps.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm sm:flex-row sm:items-start sm:justify-between"
+                    >
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center gap-2">
+                          {item.completed ? (
+                            <CheckCircle2 className="text-emerald-500" size={18} />
+                          ) : (
+                            <AlertCircle className="text-amber-500" size={18} />
+                          )}
+                          <h3 className="text-sm font-semibold text-slate-800">
+                            {item.title}
+                          </h3>
+                        </div>
+                        <div className="grid gap-1 text-xs text-slate-500">
+                          {item.responsible && (
+                            <p>
+                              <span className="font-medium text-slate-600">Penanggung jawab:</span> {item.responsible}
+                            </p>
+                          )}
+                          <p>
+                            <span className="font-medium text-slate-600">Batas waktu:</span> {formatFollowUpDueDate(item.dueDate)}
+                          </p>
+                          {item.notes && <p className="whitespace-pre-wrap">{item.notes}</p>}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 self-end sm:self-start">
+                        <button
+                          type="button"
+                          onClick={() => toggleFollowUpStatus(item.id)}
+                          className={`inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 ${
+                            item.completed
+                              ? "border-emerald-500 bg-emerald-500/10 text-emerald-600"
+                              : "border-indigo-200 bg-white text-indigo-600 hover:bg-indigo-50"
+                          }`}
+                        >
+                          {item.completed ? "Buka Kembali" : "Tandai Selesai"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteFollowUp(item.id)}
+                          className="inline-flex items-center gap-1 rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-rose-500"
+                        >
+                          <Trash2 size={14} /> Hapus
+                        </button>
+                      </div>
+                    </div>
+                  ))
                 )}
               </div>
             </div>
