@@ -36,47 +36,46 @@
   } from "lucide-react";
 
   const departmentNames = [
-  "Dinas Pendidikan",
-  "Dinas Kesehatan",
-  "Dinas Pekerjaan Umum dan Penataan Ruang",
-  "Dinas Perhubungan",
-  "Dinas Kependudukan dan Pencatatan Sipil",
-  "Dinas Sosial",
-  "Dinas Lingkungan Hidup",
-  "Dinas Pariwisata dan Ekonomi Kreatif",
-  "Dinas Pemuda dan Olahraga",
-  "Dinas Perindustrian dan Perdagangan",
-  "Dinas Pertanian",
-  "Dinas Ketahanan Pangan",
-  "Dinas Kelautan dan Perikanan",
-  "Dinas Peternakan dan Kesehatan Hewan",
-  "Dinas Penanaman Modal dan PTSP",
-  "Dinas Tenaga Kerja",
-  "Dinas Koperasi dan UKM",
-  "Dinas Komunikasi dan Informatika",
-  "Dinas Perpustakaan dan Kearsipan",
-  "Dinas Pemberdayaan Perempuan dan Perlindungan Anak",
-  "Dinas Pengendalian Penduduk dan KB",
-  "Dinas Perumahan Rakyat dan Kawasan Permukiman",
-  "Dinas Kebudayaan",
-  "Dinas Penanggulangan Bencana Daerah",
-  "Dinas Satuan Polisi Pamong Praja",
-  "Dinas Energi dan Sumber Daya Mineral",
-  "Dinas Bina Marga dan Sumber Daya Air",
-  "Dinas Cipta Karya dan Tata Ruang",
-  "Dinas Pertanahan",
-  "Dinas Transmigrasi",
-  "Dinas Statistik dan Persandian",
-  "Dinas Pemberdayaan Masyarakat dan Desa",
-  "Dinas Kebersihan dan Pertamanan",
-  "Dinas Penelitian dan Pengembangan",
-  "Dinas Arsip dan Dokumentasi",
-  "Dinas Pelayanan Terpadu",
-  "Dinas Ketertiban Umum",
-  "Dinas Pendapatan Daerah",
-  "Dinas Keamanan Siber Daerah",
-  "Dinas Administrasi Pembangunan",
-  ];
+  "DAMKAR",
+  "DINSOS",
+  "DUKCAPIL",
+  "DISKOMINFO",
+  "DISDIKBUD",
+  "Kantor Camat Kelapa",
+  "SEKDA",
+  "Dinas PUPR",
+  "DPRKP",
+  "DLHK",
+  "DISHUB",
+  "INSPEKTORAT",
+  "BAPPEDA",
+  "BALITBANGDA",
+  "Kantor Camat Oebobo",
+  "DISPUSIP",
+  "DINKOPUKM",
+  "DPMPTST",
+  "DISPERINDAG",
+  "DKP",
+  "BKAD",
+  "BKPPD",
+  "Kantor Camat Maulafa",
+  "DINKES",
+  "DISNAKERTRANS",
+  "DP3A",
+  "DISTANPAN",
+  "DPPKB",
+  "DISPORA",
+  "DISPAR",
+  "Kantor Camat Kota Raja",
+  "Sekretariat DPRD",
+  "BAPENDA",
+  "SATPOL PP",
+  "RSUD SK LERIK",
+  "DISPERTA",
+  "BADAN KESBANGPOL",
+  "BPBD",
+  "Kantor Camat Alak",
+];
 
   const slugify = (text) =>
   text
@@ -269,13 +268,14 @@
     });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 text-slate-800">
-      <header className="border-b bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-8">
-          <span className="inline-flex items-center gap-2 self-start rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">
+    <div className="relative min-h-screen bg-white text-slate-800">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-indigo-100/80 via-white to-transparent" />
+      <header className="relative border-b border-indigo-100/60 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-10">
+          <span className="inline-flex items-center gap-2 self-start rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600 shadow-sm">
             <Folder size={14} /> Pusat Dokumen Dinas
           </span>
-          <h1 className="text-3xl font-bold text-slate-900">Ruang Arsip Dinas</h1>
+          <h1 className="text-4xl font-bold text-slate-900">Sistem Pengawasan Terpadu dan Terukur</h1>
           <p className="text-sm text-slate-600 md:max-w-2xl">
             Simpan dan kelola dokumen setiap dinas dengan rapi. Pilih folder di
             samping untuk melihat file yang dimiliki masing-masing dinas dan bagikan
@@ -284,13 +284,13 @@
         </div>
       </header>
       
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-8 lg:flex-row">
+      <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10 lg:flex-row">
         <aside className="lg:w-72">
-          <div className="rounded-3xl border border-slate-200/80 bg-white/80 p-5 shadow-sm backdrop-blur">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+          <div className="rounded-3xl border border-indigo-100/80 bg-white p-6 shadow-lg shadow-indigo-100/40">
+            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">
               Folder Dinas
             </h2>
-                        <label className="relative mt-3 block">
+            <label className="relative mt-3 block">
               <Search
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
                 size={16}
@@ -303,10 +303,10 @@
                 className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </label>
-            <div className="mt-3 max-h-80 overflow-y-auto pr-1">
+            <div className="mt-4 max-h-80 space-y-2 overflow-y-auto pr-1">
               <nav className="flex flex-col gap-2">
                 {filteredFolders.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-xs text-slate-500">
+                  <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-xs text-slate-500">
                     Tidak ada dinas dengan nama "{folderSearch}".
                   </p>
                 ) : (
@@ -316,24 +316,32 @@
                       <button
                         key={folder.id}
                         onClick={() => setActiveFolder(folder.id)}
-                      className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                        isActive
-                          ? "border-indigo-400 bg-indigo-50 text-indigo-600 shadow-sm"
-                          : "border-transparent bg-slate-50 text-slate-600 hover:bg-white"
-                      }`}
-                    >
-                      <Folder size={18} />
-                      <span className="font-medium">{folder.name}</span>
-                    </button>
+                        className={`group flex items-center gap-4 rounded-2xl border px-4 py-3 text-left transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                          isActive
+                            ? "border-indigo-300 bg-indigo-50 text-indigo-600 shadow-sm"
+                            : "border-transparent bg-slate-50 text-slate-600 hover:border-slate-200 hover:bg-white"
+                        }`}
+                      >
+                        <span
+                          className={`flex h-12 w-12 items-center justify-center rounded-xl border text-indigo-500 transition ${
+                            isActive
+                              ? "border-indigo-200 bg-white shadow"
+                              : "border-slate-200 bg-slate-50 group-hover:border-indigo-200 group-hover:bg-indigo-50"
+                          }`}
+                        >
+                          <Folder size={22} />
+                        </span>
+                        <span className="font-medium leading-snug">{folder.name}</span>
+                      </button>
                     );
                   })
                 )}
               </nav>
             </div>
           </div>
-          <div className="mt-6 space-y-4 rounded-3xl border border-slate-200/80 bg-white/80 p-5 shadow-sm backdrop-blur">
+          <div className="mt-6 space-y-4 rounded-3xl border border-indigo-100/80 bg-white p-6 shadow-lg shadow-indigo-100/40">
             <div className="flex items-start gap-3">
-              <div className="rounded-full bg-indigo-100 p-2 text-indigo-500">
+              <div className="rounded-full bg-indigo-100 p-2 text-indigo-500 shadow-inner">
                 <Info size={18} />
               </div>
               <div>
@@ -345,7 +353,7 @@
                 </ul>
               </div>
             </div>
-            <div className="rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/60 p-4 text-xs text-slate-600">
+            <div className="rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/70 p-4 text-xs text-slate-600">
               <p className="font-semibold text-indigo-600">Tips:</p>
               <p className="mt-1">
                 Pastikan nama file mudah dipahami, misalnya
@@ -357,7 +365,7 @@
 
         <section className="flex-1">
           <div className="flex flex-col gap-6">
-            <div className="rounded-3xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur">
+            <div className="rounded-3xl border border-indigo-100/80 bg-white p-6 shadow-lg shadow-indigo-100/40">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h2 className="text-xl font-semibold text-slate-900">
@@ -377,7 +385,7 @@
                   />
                   <button
                     onClick={handleChooseFile}
-                    className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-300/60 transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
                     <UploadCloud size={18} /> Unggah File
                   </button>
@@ -425,7 +433,7 @@
               </div>
             </div>
 
-            <div className="rounded-3xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur">
+            <div className="rounded-3xl border border-indigo-100/80 bg-white p-6 shadow-lg shadow-indigo-100/40">
               <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <h3 className="text-lg font-semibold text-slate-900">Daftar File</h3>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
@@ -451,7 +459,7 @@
                   {getFolderName(activeFolder)}.
                 </div>
               ) : filteredFiles.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/60 p-8 text-center text-sm text-indigo-600">
+                <div className="rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/70 p-8 text-center text-sm text-indigo-600">
                   Tidak ada file yang cocok dengan pencarian "{searchTerm}".
                 </div>  
             ) : (
@@ -459,7 +467,7 @@
                   {filteredFiles.map((file) => (
                     <div
                       key={file.id}
-                      className="group flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow"
+                      className="group flex h-full flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-lg"
                     >
                       <div className="flex items-center justify-center">
                         {isImage(file.name) ? (
@@ -469,11 +477,11 @@
                             className="h-28 w-full max-w-[180px] rounded-lg border object-cover"
                           />
                         ) : (
-                          <div className="flex h-28 w-full max-w-[180px] items-center justify-center rounded-lg border bg-slate-50">
+                          <div className="flex h-32 w-full max-w-[200px] items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
                             {file.type?.includes("pdf") ? (
                               <FileText className="text-rose-500" size={36} />
                             ) : (
-                              <ImageIcon className="text-slate-400" size={36} />
+                              <ImageIcon size={36} />
                             )}
                           </div>
                         )}
